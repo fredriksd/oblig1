@@ -17,20 +17,46 @@
 \begin{document}
 \title{Hastighet til lekebil ned skråplan}
 \author{Fredrik Sandhei}
-%\footnote{AUT-1001, UiT. Obligatorisk innlevering 1}
 \date{\today}
 \maketitle
+\footnote{AUT-1001, UiT. Obligatorisk innlevering 1}
+\newpage
 
 \section{Introduksjon}
 %%Nevn bruk av atmega 16, stk-500 osv
 %%Prosjekt for å sjekke hastigheten på bilen opp mot "tidløse" formel
 
 \section{Hensikt}
+Hensikten med denne oppgaven var å undersøke gyldigheten til den såkalte 'tidsløse formelen' $ 2as = v^{2} - v_{0}^{2} $ med hjelp av sensorer for å måle tiden, og dermed hastigheten til lekebilen og sjekke den opp mot teorien.
 
 \section{Teori}
+Fra fysikken har man ved hjelp av tiden $t$ og akselerasjonen $a$ muligheten til å finne et uttrykk for hastigheten $v$ til et objekt som beveger seg. Ved hjelp av integrasjon av (\ref{hastighet}) får en uttrykt strekning avlagt $x$ ved tiden $t$.
+
+\begin{equation} \label{hastighet}
+v = v_{0} + at
+\end{equation}
+\begin{equation} \label{strekning}
+x = x_{0} + v_{0}t + \frac{1}{2}at^{2}
+\end{equation}
+Substituerer man t fra (\ref{hastighet}) og setter den inn i (\ref{strekning})får man hastigheten uttrykt uavhengig av tid.
+
+\begin{equation}
+2as = v^{2}-v_{0}^{2} \implies v^{2} = 2as-v_{0}^{2}
+\end{equation}
+\newline
+
+I dette tilfellet skulle bilen rulle ned et skråplan med en fritt bestemt helning $\alpha$. Akselerasjonen til bilen blir bestemt ut i fra tyngdeakselerasjonen samt vinkelen mellom relativ bevegelsesretning og horisontal akse, og er dermed gitt ved $a = gsin \alpha$. Fra uttrykket og figuren under er det klart at ved høyere vinkel ($0^\circ \leq\alpha\leq 90^\circ$) får en høyere akselerasjon og dermed høyere hastighet.\newline
+
+For å kunne måle hastigheten kan en ved hjelp av eksterne interrupts koblet til tre IR-sensorer og timer/counter finne tiden det tar for at lekebilen bryter to IR-lyssensorer.
+Hensikten med å bruke interrupts er at de stopper opp programmet som mikrokontrolleren kjører og gjennomfører en Interrupt Service Protocol (ISP) dersom det er en tilstandsendring som oppstår.\newline For denne problemstillinga ble det brukt en 16-bits timer, timer1, som kan telle, tilbakestilles og stoppes, men brukes også i sammenheng med ICP - Input Capture Pin - for å måle tiden mellom to logiske nivåendringer. 
+Sensor $S_{1}$ er koblet til pd2 på mikrokontrolleren, som har INT0(External Interrupt 0) som spesialfunksjon. Når pin 2 på port D blir satt høy, blir en ISP for INT0 gjennomført. Når INT0 er aktiv, settes i gang timer1. Når ICP på pin 6 på port D, som er koblet til sensorene $S_{2}$ og $S_{3}$ går høy, blir timeren tilbakestilt, i tillegg til eventuelle overflows (antall ganger klokken har passert maksverdi - 65536). Tida det går fra timeren er tilbakestilt og en ending edge blir registrert i Input Capture - registeret, blir da tida det tok å passere $S_{2}$ og $S_{3}$, som har en avstand på 10cm.\newline Da 16-bits timeren går på samme klokkefrekvens som mikrokontrollerens prosessor ($F_{CPU} = 3686400 Hz$), er det praktisk å senke hastigheten til timer-klokka. Dette oppnås ved prescalers, der klokkehastigheten kan enten reduseres med en 8,64,256,1024-divider. 
+
 
 \section{Løsning}
 \subsection{Tankegang}
+Ved hjelp av den eksterne interrupten INT0 kan man lage en tilstandsmaskin, der mikrokontrolleren gjennomfører ulike operasjoner gitt av ISP basert på tilstanden den er i. Tilstanden endres ved hjelp av de ulike sensorene. På denne måten vil ikke en ny tid bli målt før bilen passerer $S_{1}$ på nytt. 
+
+
 \subsection{Implementering}
 
 
