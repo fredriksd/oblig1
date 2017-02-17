@@ -54,11 +54,10 @@ Sensor $S_{1}$ er koblet til pd2 på mikrokontrolleren, som har INT0(External In
 
 \section{Løsning}
 \subsection{Tankegang}
-Ved hjelp av den eksterne interrupten INT0 kan man lage en tilstandsmaskin, der mikrokontrolleren gjennomfører ulike operasjoner gitt av ISP basert på tilstanden den er i. Tilstanden endres ved hjelp av de ulike sensorene. På denne måten vil ikke en ny tid bli målt før bilen passerer $S_{1}$ på nytt. 
-
+Ved hjelp av den eksterne interrupten INT0 kan man lage en tilstandsmaskin, der mikrokontrolleren gjennomfører ulike operasjoner gitt av ISP basert på tilstanden den er i. Tilstanden endres ved hjelp av de ulike sensorene. På denne måten vil ikke en ny tid bli målt før bilen passerer $S_{1}$ på nytt. Dessuten blir det også lettere å skrive koden, da man må bare lete etter hvilken tilstand mikrokontrolleren er i ved gitt tidspunkt. 
 
 \subsection{Implementering}
-
+Utgangspunktet for tilstandsmaskinen er følgende: Registrer at bilen er i bevegelse. Start timer1 og telle fram til $S_{2}$. Ved $S_{2}$, nullstill overflow-telleren $ov_counter$ og timer1 $TCNTR1$, men fortsette å telle, og endre tilstandsvariabelen($running = 2;$).
 
 
 \end{document}
