@@ -5,8 +5,8 @@
 \usepackage[utf8]{inputenc}						
 \usepackage{graphicx}       						
 \usepackage{amsmath,amssymb}
-\usepackage{grffile} 		
-				
+\usepackage{grffile}
+
 \setcounter{secnumdepth}{0}
 
 \setlength{\textheight}{240mm} 
@@ -20,6 +20,8 @@
 \date{\today}
 \maketitle
 \footnote{AUT-1001, UiT. Obligatorisk innlevering 1}
+\newpage
+\tableofcontents
 \newpage
 
 \section{Introduksjon}
@@ -57,7 +59,64 @@ Sensor $S_{1}$ er koblet til pd2 på mikrokontrolleren, som har INT0(External In
 Ved hjelp av den eksterne interrupten INT0 kan man lage en tilstandsmaskin, der mikrokontrolleren gjennomfører ulike operasjoner gitt av ISP basert på tilstanden den er i. Tilstanden endres ved hjelp av de ulike sensorene. På denne måten vil ikke en ny tid bli målt før bilen passerer $S_{1}$ på nytt. Dessuten blir det også lettere å skrive koden, da man må bare lete etter hvilken tilstand mikrokontrolleren er i ved gitt tidspunkt. 
 
 \subsection{Implementering}
-Utgangspunktet for tilstandsmaskinen er følgende: Registrer at bilen er i bevegelse. Start timer1 og telle fram til $S_{2}$. Ved $S_{2}$, nullstill overflow-telleren $ov_counter$ og timer1 $TCNTR1$, men fortsette å telle, og endre tilstandsvariabelen($running = 2;$).
+Utgangspunktet for tilstandsmaskinen er følgende: Registrer at bilen er i bevegelse. Start timer1 og telle fram til $S_{2}$. Ved $S_{2}$, nullstill overflow-telleren $ov_counter$ og timer1 $TCNTR1$, men fortsette å telle, og endre tilstandsvariabelen($running = 2;$). I denne tilstanden vil mikrokontrolleren vente til en ending edge oppstår, og legger til antall klokketikker fra overflowene dersom det var noen. Ettersom $clocks$ - variabelen finner antall klokketikker siden den siste ending edge, dvs siste gang ICP ble høy, blir tiden det tok fra $S_{2}$ og $S_{3}$ å dividere $clocks$ på timer1-frekvensen. Hastigheten blir da beregnet med $v = s/t$, der $ s = distance = 1000mm$. \newline
+%
+Resultanthastigheten skrives så ut på en skjerm gjennom void-funksjonen $displaySpeed()$, med hastigheten som argument. Da output på skjermen var regulert ved å sette relaterte bits til de ulike ledlysene høy, blir det komplisert å innblande floats/desimaltall. Dessuten blir det mindre minne å bruke, da denne datatypen bruker 64 bits, i motsetning til int på 16 bits. Derfor ble hastigheten økt med graden 10. Det første sifferet blir da hastighet heltallsdividert på 10, og det siste sifferet hastighet modulo 10. 
 
+%Finn ut navnet på displayet.
+%Legg til bilde av display for eksempel.
+
+\section{Testing}
+I denne seksjonen vises testresultaten med ulik $\alpha$ satt opp mot den teoretiske (gjennom (\ref{hastighet})) og den praktiske. Da vinkelen ikke er nøyaktig ønsket vinkel, blir det en liten feilkilde på $\pm 0.1m/s$ (? sjekk ut hvor mye?). Merk notasjonen for klokkefrekvens med prescaler 8 og 1024. 
+%Sjekk for \alpha ≈ 30, 45, 60.
+%Sjekk for teoretisk hastighet. 
+
+\begin{table}[h]
+\caption{Teoretisk hastighet mot praktisk hastighet med ulike $\alpha$ og $F_{CPU_{8}}$}
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+Vinkel ($\alpha$)  & Teoretisk ($ v =\sqrt{2as}$) &  Praktisk\\
+\hline
+
+$\alpha = 30^{\circ}\rm$ & t1 & ($p1 \pm 0.1) m/s \rm$\\
+
+$\alpha = 45^{\circ}\rm$ & t2 & ($p2 \pm 0.1) m/s \rm $ \\
+
+$\alpha = 60^{\circ}\rm$ & t3 & ($p3 \pm 0.1) m/s \rm $ \\
+
+\hline
+
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\caption{Teoretisk hastighet mot praktisk hastighet med ulike $\alpha$ og $F_{CPU_{1024}}$}
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+Vinkel ($\alpha$)  & Teoretisk ($ v =\sqrt{2as}$) &  Praktisk\\
+\hline
+
+$\alpha = 30^{\circ}\rm$ & t1 & ($p1 \pm 0.1) m/s \rm$\\
+
+$\alpha = 45^{\circ}\rm$ & t2 & ($p2 \pm 0.1) m/s \rm $ \\
+
+$\alpha = 60^{\circ}\rm$ & t3 & ($p3 \pm 0.1) m/s \rm $ \\
+
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+\section{Resultater}
+%Skriv om hastigheten, hvor stor forskjell er det mellom de, og ca hvor stor blir usikkerheten. 
+\section{Diskusjon}
+%Hva 'gikk galt'? M.a.o., hva gjorde eventuelt at hastigheten ble så forskjellige ved de ulike vinklene? 
+%Ble de korrekte, eller med en viss mengde avvik?
 
 \end{document}
+
