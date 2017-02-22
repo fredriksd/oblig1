@@ -136,8 +136,9 @@ Fra testene virker det som om at hastigheten som måles har et avvik på ca $0.3
 
 Den 'tidsløse' hastighetformelen $v = \sqrt{2as}$, hvor $a = g\cdot sin\alpha$, ikke tar hensyn til ytre påvirkninger, slik som luftmotstand (forsåvidt neglisjerbar) og friksjon mellom legemet og underlaget. Dermed ble den målte hastigheten noe mindre enn fra formelen. Den vinkelen som ble satt har også sine feilmarginer, da den kan veksle litt mellom høyere og lavere verdier. Det viser seg gjennom litt regning at en $\pm 5^{\circ}$ forskjell fra ønsket vinkel, ville hastigheten endres med $\pm$ 0.3 m/s, dersom vinklene var tilstrekkelig små ($0^\circ \leq\alpha\leq 60^\circ$)
 \newline
-Dersom man kunne velge et annet underlag, for eksempel en luftputebane, kan friksjonen neglisjeres og da vil den målte hastigheten bli tilnærmet lik den teoretiske.
+Dersom man kunne velge et annet underlag, for eksempel en luftputebane, kan friksjonen neglisjeres og da vil den målte hastigheten bli tilnærmet lik den teoretiske. Videre ville jeg ha endret programmet til å få TIMER1 - klokken stoppet frem til ICP blir høy, for å ikke 
 
+\\
 En nevnverdig sak, men en liten avsporing, er beregning av selve hastigheta (se vedlegget). Hastigheta ble multiplisert med 10 for å ikke rote med floats, men eksakt "hvor" en skulle multiplisere med 10 var ikke "bare, bare": Dersom man lot hastigheten være på formen
 \begin{lstlisting}
 	speed = (distance/finish_time)*10;
@@ -149,9 +150,8 @@ i stedet for
 ville ikke hastigheten bli riktig vist ut på skjermen. Jeg gjetter vel at det har noe med C-operatorrekkefølger, men på den andre siden gir det ikke mening. Fra matematikken, som programmering er godt basert på, er disse to $speed$-utsagnene ekvivalente. 
 
 
-% \lstinputlisting{Caption=Scheduler, style = customc}
 \section{Konklusjon}
-Koden implementert for dette problemet var basert på en tilstandsmaskin, slik at man lettere observere eventuelle feilkilder ved feilkilder. Tilstandsmaskinen funket godt til denne problemstillingen, 
+Koden implementert for dette problemet var basert på en tilstandsmaskin, slik at man lettere observere eventuelle feilkilder ved feilkilder. Tilstandsmaskinen funket godt til denne problemstillingen. Hastighetene hadde noe avvik fra den tidløse hastighetsformelen, men faktorer som unøyaktige vinkler, friksjonskrefter og luftmotstand påvirker resultatet. Likevel kan man være fornøyde med utfallet. 
 
 \section{Vedlegg}
 \newpage
