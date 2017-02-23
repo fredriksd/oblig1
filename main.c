@@ -13,8 +13,7 @@
 volatile unsigned char running;
 volatile unsigned int ov_counter,ending_edge, speed;	
 volatile unsigned long clocks, time_finish;
-//(mm*10). Da blir hastigheta speed = speed*10
-volatile unsigned int distance = 1000; 
+volatile unsigned int distance = 100; 
 unsigned char displayScreen(unsigned int speed);
 
 ISR(INT0_vect)
@@ -46,8 +45,7 @@ ISR(TIMER1_CAPT_vect)
         // <-- (Klokkehastighet / prescaler) 3686400 / 8 (s*1000)
 		time_finish = clocks/460; 
 		//Gir hastighet * 10, for å slippe desimaler. //Får dermed m/s.
-        speed =((unsigned long)distance/((unsigned long)time_finish));
-        
+        speed =((unsigned long)distance*10/((unsigned long)time_finish));
 		running = 0;
 
 	}
