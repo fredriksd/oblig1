@@ -41,7 +41,7 @@
 
 \begin{document}
 
-\title{Hastighet til lekebil ned skråplan}
+\title{Hastighet til modellbil ned skråplan}
 \author{Fredrik Sandhei \thanks{UiT - AUT-1001, obligatorisk innlevering 1}}
 \date{\today}
 \maketitle
@@ -50,10 +50,10 @@
 \newpage
 
 \section{Introduksjon}
-Denne rapporten er en besvarelse på den første obligatoriske innleveringen i faget AUT-1001, i samsvar med å lære seg å bruke 8-bits mikrokontrolleren ATmega16 med STK-500-brettet for ISP (In-System Programming). Oppgaven skulle løses med å lage et C-program i IDE Atmel Studio, som fant hastigheten til en lekebil ned et skråplan. 
+Denne rapporten er en besvarelse på den første obligatoriske innleveringen i faget AUT-1001, i samsvar med å lære seg å bruke 8-bits mikrokontrolleren ATmega16 med STK-500-brettet for ISP (In-System Programming). Oppgaven skulle løses med å lage et C-program i IDE Atmel Studio, som fant hastigheten til en modellbil ned et skråplan. 
 
 \section{Hensikt}
-Hensikten med denne oppgaven var å undersøke gyldigheten til den såkalte 'tidsløse formelen' $ 2as = v^{2} - v_{0}^{2} $ med hjelp av sensorer for å måle tiden, og dermed hastigheten til lekebilen og sjekke den opp mot teorien.
+Hensikten med denne oppgaven var å undersøke gyldigheten til den såkalte 'tidsløse formelen' $ 2as = v^{2} - v_{0}^{2} $ med hjelp av sensorer for å måle tiden, og dermed hastigheten til modellbilen og sjekke den opp mot teorien.
 
 \section{Teori}
 Fra fysikken har man ved hjelp av tiden $t$ og akselerasjonen $a$ muligheten til å finne et uttrykk for hastigheten $v$ til et objekt som beveger seg. Ved hjelp av integrasjon av (\ref{hastighet}) får en uttrykt strekning avlagt $x$ ved tiden $t$.
@@ -73,9 +73,9 @@ Substituerer man t fra (\ref{hastighet}) og setter den inn i (\ref{strekning})f�
 
 I dette tilfellet skulle bilen rulle ned et skråplan med en fritt bestemt helning $\alpha$. Akselerasjonen til bilen blir bestemt ut i fra tyngdeakselerasjonen samt vinkelen mellom relativ bevegelsesretning og horisontal akse, og er dermed gitt ved $a = gsin \alpha$. Fra uttrykket og figuren under er det klart at ved høyere vinkel ($0^\circ \leq\alpha\leq 90^\circ$) får en høyere akselerasjon og dermed høyere hastighet.\newline
 
-For å kunne måle hastigheten kan en ved hjelp av eksterne interrupts koblet til tre IR-sensorer og timer/counter finne tiden det tar for at lekebilen bryter to IR-lyssensorer.
+For å kunne måle hastigheten kan en ved hjelp av eksterne interrupts koblet til tre IR-sensorer og timer/counter finne tiden det tar for at modellbilen bryter to IR-lyssensorer.
 Hensikten med å bruke interrupts er at de stopper opp programmet som mikrokontrolleren kjører og gjennomfører en Interrupt Service Protocol (ISP) dersom det er en bestemt tilstandsendring som oppstår.\newline For denne problemstillinga ble det brukt en 16-bits timer, timer1, som kan telle, tilbakestilles og stoppes, men brukes også i sammenheng med ICP - Input Capture Pin - for å måle tiden mellom to like logiske nivåendringer. 
-Sensor $S_{1}$ er koblet til pd2 på mikrokontrolleren, som har INT0(External Interrupt 0) som spesialfunksjon. Når pin 2 på port D blir satt høy, blir en ISP for INT0 gjennomført. Da blir det registrert at et objekt (slik som denne lekebilen) kommer ned skråplanet. Når ICP på pin 6 på port D, som er koblet til sensorene $S_{2}$ og $S_{3}$, går høy, blir timeren tilbakestilt, i tillegg til eventuelle overflows fra TIMER1-interrupten (antall ganger klokken har passert maksverdi - 65535). Tida det går fra timeren er tilbakestilt og en ending edge blir registrert i Input Capture - registeret, blir da tida det tok å passere $S_{2}$ og $S_{3}$. Avstanden mellom $S_{2}$ og $S_{3}$ er på 10cm.\newline Da 16-bits timeren går på samme klokkefrekvens som mikrokontrollerens prosessor ($F_{CPU} = 3686400 Hz$), er det praktisk å senke hastigheten til timer-klokka. Dette oppnås ved prescalers, der klokkehastigheten kan enten reduseres med en 1,8,64,256,1024-divider. I denne løsningen ble en 8-divider brukt som prescaler.
+Sensor $S_{1}$ er koblet til pd2 på mikrokontrolleren, som har INT0(External Interrupt 0) som spesialfunksjon. Når pin 2 på port D blir satt høy, blir en ISP for INT0 gjennomført. Da blir det registrert at et objekt (slik som denne modellbilen) kommer ned skråplanet. Når ICP på pin 6 på port D, som er koblet til sensorene $S_{2}$ og $S_{3}$, går høy, blir timeren tilbakestilt, i tillegg til eventuelle overflows fra TIMER1-interrupten (antall ganger klokken har passert maksverdi - 65535). Tida det går fra timeren er tilbakestilt og en ending edge blir registrert i Input Capture - registeret, blir da tida det tok å passere $S_{2}$ og $S_{3}$. Avstanden mellom $S_{2}$ og $S_{3}$ er på 10cm.\newline Da 16-bits timeren går på samme klokkefrekvens som mikrokontrollerens prosessor ($F_{CPU} = 3686400 Hz$), er det praktisk å senke hastigheten til timer-klokka. Dette oppnås ved prescalers, der klokkehastigheten kan enten reduseres med en 1,8,64,256,1024-divider. I denne løsningen ble en 8-divider brukt som prescaler.
 
 \begin{figure}
   \centering
@@ -138,7 +138,7 @@ Den 'tidsløse' hastighetformelen $v = \sqrt{2as}$, hvor $a = g\cdot sin\alpha$,
 Dersom man kunne velge et annet underlag, for eksempel en luftputebane, kunne friksjonen neglisjeres og da vil den målte hastigheten bli tilnærmet lik den teoretiske. Videre ville jeg ha endret programmet til å få TIMER1 - klokken stoppet frem til ICP blir høy, for å ikke kaste bort minne på tid som ikke deltar i målingen. Noe annet kan være å få satt en avstandssensor på banen for å kunne forsikre at man testet med lik strekning for hver runde. 
 \newline
 
-En nevnverdig sak, men en liten avsporing, er beregning av selve hastigheta (se vedlegget). Hastigheta ble multiplisert med 10 for å ikke rote med floats, men eksakt ''hvor'' en skulle multiplisere med 10 var ikke ''bare, bare'': Dersom man lot hastigheten være på formen
+En nevneverdig sak, men en liten avsporing, er beregning av selve hastigheta (se vedlegget). Hastigheta ble multiplisert med 10 for å ikke rote med floats, men eksakt ''hvor'' en skulle multiplisere med 10 var ikke ''bare, bare'': Dersom man lot hastigheten være på formen
 \begin{lstlisting}
 	speed = ((unsigned long)distance/finish_time)*10;
 \end{lstlisting}
