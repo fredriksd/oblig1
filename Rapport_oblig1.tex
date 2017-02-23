@@ -7,6 +7,9 @@
 \usepackage{amsmath,amssymb}
 \usepackage{grffile}
 \usepackage{listings}
+\usepackage{caption}
+\usepackage[export]{adjustbox}
+\usepackage{titling}
 \setcounter{secnumdepth}{0}
 
 \lstset{extendedchars=true, basicstyle=\footnotesize, numbers=left, numberstyle=\tiny, frame=shadowbox, tabsize=2, language=C, showstringspaces=false, breaklines=true,
@@ -28,18 +31,20 @@
 \setlength{\textwidth}{180mm}  
 \topmargin -5mm 
 \oddsidemargin -5mm
+\captionsetup[figure]{singlelinecheck=off, justification = raggedleft} 
+\pretitle{%
+  \begin{center}
+  \LARGE
+  \includegraphics[width=6cm,height=6cm]{uitlogo.png}\\[\bigskipamount]
+}
+\posttitle{\end{center}}
 
 \begin{document}
+
 \title{Hastighet til lekebil ned skråplan}
-\author{Fredrik Sandhei}
+\author{Fredrik Sandhei \thanks{UiT - AUT-1001, obligatorisk innlevering 1}}
 \date{\today}
 \maketitle
-\begin{figure}[htbp]
-	\begin{center}
-		\includegraphics[scale = 1.5]{Uitlogo.png}
-	\end{center}
-\end{figure}
-\footnote{AUT-1001, UiT. Obligatorisk innlevering 1}
 \newpage
 \tableofcontents
 \newpage
@@ -72,6 +77,12 @@ For å kunne måle hastigheten kan en ved hjelp av eksterne interrupts koblet ti
 Hensikten med å bruke interrupts er at de stopper opp programmet som mikrokontrolleren kjører og gjennomfører en Interrupt Service Protocol (ISP) dersom det er en bestemt tilstandsendring som oppstår.\newline For denne problemstillinga ble det brukt en 16-bits timer, timer1, som kan telle, tilbakestilles og stoppes, men brukes også i sammenheng med ICP - Input Capture Pin - for å måle tiden mellom to like logiske nivåendringer. 
 Sensor $S_{1}$ er koblet til pd2 på mikrokontrolleren, som har INT0(External Interrupt 0) som spesialfunksjon. Når pin 2 på port D blir satt høy, blir en ISP for INT0 gjennomført. Da blir det registrert at et objekt (slik som denne lekebilen) kommer ned skråplanet. Når ICP på pin 6 på port D, som er koblet til sensorene $S_{2}$ og $S_{3}$, går høy, blir timeren tilbakestilt, i tillegg til eventuelle overflows fra TIMER1-interrupten (antall ganger klokken har passert maksverdi - 65535). Tida det går fra timeren er tilbakestilt og en ending edge blir registrert i Input Capture - registeret, blir da tida det tok å passere $S_{2}$ og $S_{3}$. Avstanden mellom $S_{2}$ og $S_{3}$ er på 10cm.\newline Da 16-bits timeren går på samme klokkefrekvens som mikrokontrollerens prosessor ($F_{CPU} = 3686400 Hz$), er det praktisk å senke hastigheten til timer-klokka. Dette oppnås ved prescalers, der klokkehastigheten kan enten reduseres med en 1,8,64,256,1024-divider. I denne løsningen ble en 8-divider brukt som prescaler.
 
+\begin{figure}
+  \centering
+  \captionbox
+  {Det hjemmelagde skråplanet av foreleseren, med $S_{2}$ og $S_{3}$ fremst, og $S_{1}$ bakerst.}
+  {\includegraphics[width=0.4\textwidth, right]{field.jpg}}
+\end{figure}
 
 \section{Løsning}
 \subsection{Tilstandsmaskin}
@@ -82,7 +93,13 @@ Utgangspunktet for tilstandsmaskinen er følgende: Registrer at bilen er i beveg
 
 Resultanthastigheten skrives så ut på en syvsegmentsskjerm gjennom unsigned-char-funksjonen \newline $displaySpeed()$, med hastigheten som argument. Da output på skjermen var regulert ved å sette relaterte bits til de ulike ledlysene høy, blir det komplisert å innblande floats/desimaltall. Dessuten blir det mer minne å bruke, da denne datatypen bruker 64 bits, i motsetning til int på 16 bits. Derfor ble hastigheten økt med graden 10. Det første sifferet blir da hastighet heltallsdividert på 10, og det siste sifferet hastighet modulo 10. For å skille det første og siste sifferet fra hverandre, blir det første sifferet OR-ed med 1, da det 0. bit er reservert til desimalet. 
 
-%Legg til bilde av display for eksempel.
+
+\begin{figure}[htbp]
+	\begin{center}
+		\includegraphics[width=0.4\textwidth, right]{display.jpg}
+		\caption{Syvsegmentsskjermen brukt.}
+	\end{center}
+\end{figure}
 
 \section{Testing}
 I denne seksjonen vises testresultatene med ulik $\alpha$ satt opp mot den teoretiske (gjennom (\ref{hastighet})) og den praktiske. Da vinkelen ikke blir nøyaktig ønsket, blir det en liten feilkilde, da for eksempel $\pm$ 5 graders forskjell gir en forskjell på $\pm$ 0.3 m/s. For målingene ble det prøvd tre ganger for hver $\alpha$, og deretter gjennomsnittet av disse blir vist. Den totale strekningen for bilen hver runde var $550mm$.
@@ -129,7 +146,7 @@ i stedet for
 \begin{lstlisting}
 	speed = (unsigned long)(distance*10/finish_time);
 \end{lstlisting}
-ville ikke hastigheten bli riktig vist ut på skjermen. Jeg gjetter vel at det har noe med C-operatorrekkefølger, men på den andre siden gir det ikke mening. Fra matematikken, som programmering er godt basert på, er disse to $speed$-utsagnene ekvivalente. 
+ville ikke hastigheten bli riktig vist ut på skjermen. Grunnen til dette ligger i C-operatoren $/$, som er heltallsdivisor. Det vil si at den runder opp til det nærmeste minste hele tallet. Da vil den første $speed$ - eksempelet vise bare $0$ som desimaltall, mens den andre vil vise mer eller mindre korrekt hastighet. 
 
 
 \section{Konklusjon}
